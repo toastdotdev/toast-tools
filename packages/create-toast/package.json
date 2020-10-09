@@ -1,0 +1,46 @@
+{
+  "name": "create-toast",
+  "description": "Create a new Toast site!",
+  "version": "0.0.3",
+  "author": "Chris Biscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "bin": {
+    "create-toast": "./bin/run"
+  },
+  "bugs": "https://github.com/toastdotdev/create-toast/issues",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^3",
+    "@oclif/plugin-warn-if-update-available": "^1.7.0",
+    "degit": "^2.8.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/src"
+  ],
+  "homepage": "https://github.com/toastdotdev/create-toast",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "oclif": {
+    "bin": "create-toast",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-warn-if-update-available"
+    ]
+  },
+  "repository": "toastdotdev/create-toast",
+  "scripts": {
+    "prepack": "oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md"
+  }
+}
