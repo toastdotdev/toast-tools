@@ -6,6 +6,7 @@
   "bin": {
     "create-toast": "./bin/run"
   },
+  "type": "commonjs",
   "bugs": "https://github.com/toastdotdev/create-toast/issues",
   "dependencies": {
     "@oclif/command": "^1",

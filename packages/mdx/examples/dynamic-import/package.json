@@ -1,0 +1,25 @@
+{
+  "name": "dynamic-import",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "private": "true",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "breadbox --dest public/web_modules",
+    "build": "toast incremental ."
+  },
+  "dependencies": {
+    "@sector/breadbox": "^0.0.4",
+    "toast": "^0.3.19",
+    "@toastdotdev/mdx": "../../"
+  },
+  "snowpack": {
+    "exclude": [
+      "public/**",
+      "toast.js"
+    ],
+    "installOptions": {}
+  }
+}

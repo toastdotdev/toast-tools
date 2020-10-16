@@ -1,3 +1,6 @@
+.tmp
+public
+
 # Logs
 logs
 *.log
