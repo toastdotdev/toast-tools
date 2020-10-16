@@ -20,6 +20,10 @@
       "public/**",
       "toast.js"
     ],
-    "installOptions": {}
+    "installOptions": {
+      "alias": {
+        "react": "preact/compat"
+      }
+    }
   }
 }

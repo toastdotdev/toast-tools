@@ -1,10 +1,17 @@
 import { h } from "preact";
 import { MDXProvider } from "@mdx-js/preact";
+import { Helmet } from "react-helmet";
 import Thing from "../src/components/a-thing.js";
 
 const components = {
+  wrapper: (props) => <div style={{ padding: "1rem" }} {...props} />,
+  h1: (props) => <h1 {...props} style={{ display: "flex" }} />,
   codeblock: ({ children, ...props }) => (
-    <div dangerouslySetInnerHTML={{ __html: children }} {...props} />
+    <div
+      dangerouslySetInnerHTML={{ __html: children }}
+      {...props}
+      style={{ background: "black", padding: "1rem" }}
+    />
   ),
   "heading-link-icon": (props) => (
     <svg
@@ -27,6 +34,12 @@ const components = {
 export default (props) => {
   return (
     <MDXProvider components={components}>
+      <Helmet>
+        <link
+          href="https://unpkg.com/tailwindcss@1.9.2/dist/tailwind.min.css"
+          rel="stylesheet"
+        />
+      </Helmet>
       <div>{props.children}</div>
     </MDXProvider>
   );
