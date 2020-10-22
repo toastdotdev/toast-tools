@@ -28,6 +28,23 @@ try {
   console.log(e);
 }
 
+export const fetchMdxFromDisk = async () => {
+  const filenames = await globby(directory, {
+    expandDirectories: { extensions: ["mdx"] },
+  });
+  const files = await Promse.all(
+    filenames.map(async (filename) => {
+      const contents = await fs.readFile(filename, "utf-8");
+      return {
+        filename,
+        file: contents,
+      };
+    })
+  );
+
+  return files;
+};
+
 export const sourceMdx = async ({
   setDataForSlug,
   namedExports = ["meta"],
@@ -38,11 +55,9 @@ export const sourceMdx = async ({
   const nExports = namedExports.includes("meta")
     ? namedExports
     : [...namedExports, "meta"];
-  const files = await globby(directory, {
-    expandDirectories: { extensions: ["mdx"] },
-  });
+  const files = fetchMdxFromDisk();
   return Promise.all(
-    files.map(async (filename) => {
+    files.map(async ({ filename, file }) => {
       const mdxExports = {};
       const remarkPluckMeta = (_options) => (tree) => {
         nExports.forEach((exportName) => {
@@ -57,7 +72,6 @@ export const sourceMdx = async ({
         return tree;
       };
 
-      const file = await fs.readFile(filename, "utf-8");
       let compiledMDX;
       try {
         compiledMDX = await mdx(file, {
@@ -114,7 +128,8 @@ export const sourceMdx = async ({
         .replace(/^\//, "")
         .replace(/\/$/, "");
 
-      await setDataForSlug(slugPrefix + "/" + mdxExports.meta.slug, {
+      let prefix = slugPrefix === "/" ? "/" : slugPrefix + "/";
+      await setDataForSlug(prefix + mdxExports.meta.slug, {
         component: {
           mode: "source",
           value: `/** @jsx mdx */

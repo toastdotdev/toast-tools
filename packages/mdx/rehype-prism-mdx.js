@@ -17,7 +17,7 @@ try {
   console.log(e);
 }
 
-const prismTheme = {
+const defaultPrismTheme = {
   plain: {
     color: "#d6deeb",
     backgroundColor: "#011627",
@@ -161,7 +161,7 @@ export default (options) => (ast) => {
             ...{
               code: tree.children[0].value.trim(),
               language: lang,
-              theme: prismTheme,
+              theme: options?.theme || defaultPrismTheme,
               Prism,
             },
           },
