@@ -55,7 +55,7 @@ export const sourceMdx = async ({
   const nExports = namedExports.includes("meta")
     ? namedExports
     : [...namedExports, "meta"];
-  const files = fetchMdxFromDisk({ directory });
+  const files = await fetchMdxFromDisk({ directory });
   return Promise.all(
     files.map(async ({ filename, file }) => {
       const mdxExports = {};
