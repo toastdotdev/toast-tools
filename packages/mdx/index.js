@@ -32,7 +32,7 @@ export const fetchMdxFromDisk = async ({ directory }) => {
   const filenames = await globby(directory, {
     expandDirectories: { extensions: ["mdx"] },
   });
-  const files = await Promse.all(
+  const files = await Promise.all(
     filenames.map(async (filename) => {
       const contents = await fs.readFile(filename, "utf-8");
       return {
