@@ -22,3 +22,13 @@ export const sourceData = async ({ setDataForSlug }) => {
   return;
 };
 ```
+
+or take a more manual approach
+
+```js
+export const sourceData = async ({ setDataForSlug }) => {
+  const files = await fetchMdxFromDisk({directory: "./content});
+  // do stuff
+  return
+}
+```
