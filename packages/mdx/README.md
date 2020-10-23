@@ -23,9 +23,11 @@ export const sourceData = async ({ setDataForSlug }) => {
 };
 ```
 
-or take a more manual approach
+or take a more manual approach and compile the mdx yourself
 
 ```js
+import { fetchMdxFromDisk } from "@toastdotdev/mdx";
+
 export const sourceData = async ({ setDataForSlug }) => {
   const files = await fetchMdxFromDisk({directory: "./content});
   // do stuff
