@@ -179,15 +179,18 @@ export default (options) => (ast) => {
                   getLineProps({
                     line,
                     key: i,
-                    style: shouldHighlightLine(i)
-                      ? {
-                          borderLeft: "1px solid red",
-                          backgroundColor: "hsla(220, 26%, 13%, 1)",
-                          margin: "0 -2rem",
-                          padding: "0 2rem",
-                          borderLeft: "1px solid rgba(51,183,255,.41)",
-                        }
-                      : {},
+                    // style: shouldHighlightLine(i)
+                    //   ? {
+                    //       borderLeft: "1px solid red",
+                    //       backgroundColor: "hsla(220, 26%, 13%, 1)",
+                    //       margin: "0 -2rem",
+                    //       padding: "0 2rem",
+                    //       borderLeft: "1px solid rgba(51,183,255,.41)",
+                    //     }
+                    //   : {},
+                    className: shouldHighlightLine(i)
+                      ? "mdx-highlight-line"
+                      : "",
                   }),
 
                   line.map((token, key) =>
