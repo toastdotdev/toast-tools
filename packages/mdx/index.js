@@ -28,9 +28,9 @@ try {
   console.log(e);
 }
 
-export const fetchMdxFromDisk = async ({ directory }) => {
+export const fetchMdxFromDisk = async ({ directory, extensions = ["mdx"] }) => {
   const filenames = await globby(directory, {
-    expandDirectories: { extensions: ["mdx"] },
+    expandDirectories: { extensions },
   });
   const files = await Promise.all(
     filenames.map(async (filename) => {
