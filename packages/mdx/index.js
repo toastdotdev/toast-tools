@@ -30,48 +30,39 @@ export const processMdx = async (
   content,
   { filepath, namedExports, prismTheme }
 ) => {
-  try {
-    const result = await compileMdx(content, {
-      filepath,
-      remarkPlugins: [
-        [
-          remarkPluckMeta,
-          {
-            exportNames: namedExports.includes("meta")
-              ? namedExports
-              : [...namedExports, "meta"],
-          },
-        ],
+  return compileMdx(content, {
+    filepath,
+    remarkPlugins: [
+      [
+        remarkPluckMeta,
+        {
+          exportNames: namedExports.includes("meta")
+            ? namedExports
+            : [...namedExports, "meta"],
+        },
       ],
-      rehypePlugins: [
-        [rehypePrism, { theme: prismTheme }],
-        rehypeSlug,
-        [
-          rehypeLink,
-          {
-            properties: {
-              className: "heading-link-anchor",
-              // style: "position: absolute; right: calc(100% + 5px);",
-            },
-            content: {
-              type: "element",
-              tagName: "heading-link-icon",
-              properties: { className: ["heading-link-icon"] },
-              children: [],
-              // children: [parsedCorgi]
-            },
+    ],
+    rehypePlugins: [
+      [rehypePrism, { theme: prismTheme }],
+      rehypeSlug,
+      [
+        rehypeLink,
+        {
+          properties: {
+            className: "heading-link-anchor",
+            // style: "position: absolute; right: calc(100% + 5px);",
           },
-        ],
+          content: {
+            type: "element",
+            tagName: "heading-link-icon",
+            properties: { className: ["heading-link-icon"] },
+            children: [],
+            // children: [parsedCorgi]
+          },
+        },
       ],
-    });
-    return result;
-  } catch (e) {
-    console.error(
-      `mdx content at ${filepath} failed to process with error: `,
-      e
-    );
-    throw e;
-  }
+    ],
+  });
 };
 export const sourceMdx = async ({
   setDataForSlug,
@@ -104,14 +95,57 @@ export const sourceMdx = async ({
   // if we're given MDX strings, make them into
   // a form we can process
   if (sources) {
-    files = files.concat(sources.map((source) => ({ file: source })));
+    files = files.concat(sources);
   }
   return Promise.all(
-    files.map(async ({ filename, file }) => {
-      const result = await processMdx(file, {
-        filepath: filename,
-        namedExports,
-      });
+    files.map(async ({ filename, file, source, id }) => {
+      let result;
+      try {
+        result = await processMdx(file || source, {
+          filepath: filename,
+          namedExports,
+        });
+      } catch (e) {
+        let matchString = "";
+        try {
+          // get the line and column from the error, if it exists
+          let match = e.toString().match(/\((\d+):\d+-(\d+):\d+\)$/);
+          if (match) {
+            let lowerBound = parseInt(match[1]) - 3 || 0;
+            let upperBound = parseInt(match[2]) + 3;
+            matchString = `
+
+\`\`\`
+${(file || source)
+  .split("\n")
+  .filter((line, i) => {
+    // if line is within bounds, keep it
+    return i >= lowerBound && i <= upperBound;
+  })
+  .map(
+    (line, i) =>
+      `${(lowerBound + i)
+        .toString()
+        .padStart(upperBound.toString().length, " ")} |${line}`
+  )
+  .join("\n")}
+\`\`\``;
+          }
+        } catch (e) {
+          // swallow any match creation errors
+          // because they won't enable the user to *do* anything
+        }
+        const error = new Error(`Mdx ${
+          source ? `source: \`${id}\`` : `file: \`${filename}\``
+        } had an error while processing in \`@toastdotdev/mdx\`:
+
+    ${e}${matchString}`);
+        // We don't want the error showing up as being from here
+        // it's from the Mdx parsing, which the newly created
+        // stack we just created doesn't represent
+        error.stack = "";
+        throw error;
+      }
       const compiledMdx = result.content;
       const mdxExports = result.data.exports;
       // if the user doesn't have a meta export, make it
