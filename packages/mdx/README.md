@@ -26,11 +26,25 @@ export const sourceData = async ({ setDataForSlug }) => {
 or take a more manual approach and compile the mdx yourself
 
 ```js
-import { fetchMdxFromDisk } from "@toastdotdev/mdx";
+import { fetchMdxFromDisk, processMdx } from "@toastdotdev/mdx";
 
 export const sourceData = async ({ setDataForSlug }) => {
-  const files = await fetchMdxFromDisk({directory: "./content"});
-  // do stuff
+  const files = await fetchMdxFromDisk({ directory: "./content" });
+  Promise.all(
+    files.map(async ({ filename, file }) => {
+      const { content: compiledMdx, data } = await processMdx(file, {
+        filepath: filename,
+      });
+
+      await setDataForSlug(`/${data.exports.meta.slug}`, {
+        component: {
+          mode: "source",
+          value: compiledMdx,
+        },
+        data: mdxExports,
+      });
+    })
+  );
   return;
-}
+};
 ```

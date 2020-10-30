@@ -6,7 +6,7 @@ export default (props) => (
     <ul>
       {props.posts.map(({ meta }) => (
         <li>
-          <a href={"/post/" + meta.slug}>{meta.title}</a>
+          <a href={"/posts/" + meta.slug}>{meta.title}</a>
         </li>
       ))}
     </ul>
