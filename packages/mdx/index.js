@@ -67,7 +67,7 @@ export const processMdx = async (
     return result;
   } catch (e) {
     console.error(
-      `mdx content at ${filename} failed to process with error: `,
+      `mdx content at ${filepath} failed to process with error: `,
       e
     );
     throw e;
