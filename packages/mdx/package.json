@@ -29,6 +29,7 @@
   },
   "files": [
     "rehype-prism-mdx.js",
+    "remark-pluck-meta.js",
     "index.js"
   ]
 }
