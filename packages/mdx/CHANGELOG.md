@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.1.4
+
+### Patch Changes
+
+- a4c761d: Allow remark and rehype plugins to be passed in processMdx options
+
 ## 0.1.0
 
 ### Minor Changes
