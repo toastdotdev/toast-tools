@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.1.5
+
+### Patch Changes
+
+- fe2cf55: add a default state for namedExports in processMdx
+
 ## 0.1.4
 
 ### Patch Changes
