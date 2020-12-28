@@ -1,0 +1,18 @@
+on:
+  release:
+    types: [published]
+jobs:
+  trigger-npm-publish-notification:
+    name: Notify Discord of Publish
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_URL: ${{ github.event.url }}
+      RELEASE_BODY: ${{ github.event.body }}
+      URL: ${{secrets.NPM_PUBLISH_NOTIFICATION_URL}}
+    steps:
+      - name: curl
+        run: |
+          curl -XPOST $URL -H "Content-Type: application/json" -d "{\"content\": \"a @toast-tools package was released to NPM
+          $RELEASE_URL
+          $RELEASE_BODY
+          \"}"
