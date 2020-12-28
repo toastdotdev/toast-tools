@@ -28,7 +28,13 @@ export const fetchMdxFromDisk = async ({ directory, extensions = ["mdx"] }) => {
 
 export const processMdx = async (
   content,
-  { filepath, namedExports, prismTheme, remarkPlugins = [], rehypePlugins = [] }
+  {
+    filepath,
+    namedExports = [],
+    prismTheme,
+    remarkPlugins = [],
+    rehypePlugins = [],
+  }
 ) => {
   return compileMdx(content, {
     filepath,
