@@ -1,4 +1,4 @@
-import { createCompiler } from "@mdx-js/mdx";
+import mdx from "@mdx-js/mdx";
 import { promises as fs } from "fs";
 import globby from "globby";
 import path from "path";
@@ -8,6 +8,8 @@ import slugify from "@sindresorhus/slugify";
 
 import rehypePrism from "./rehype-prism-mdx.js";
 import remarkPluckMeta from "./remark-pluck-meta.js";
+
+const { createCompiler } = mdx;
 
 export const fetchMdxFromDisk = async ({ directory, extensions = ["mdx"] }) => {
   const filenames = await globby(directory, {

@@ -1,19 +1,88 @@
-import json5 from "json5";
 import visit from "unist-util-visit";
 
-// a remark plugin that plucks MDX exports and parses then with json5
+// a remark plugin that plucks MDX exports and converts
+// the raw estree representation of exports to JSON as much
+// as possible
 export default function remarkPluckMeta({ exportNames }) {
   return (tree, file) => {
     file.data.exports = {};
-    exportNames.forEach((exportName) => {
-      const re = new RegExp(`^export const ${exportName} = `);
-      visit(tree, "export", (ast) => {
-        if (ast.value.startsWith(`export const ${exportName} = `)) {
-          const obj = ast.value.replace(re, "").replace(/;\s*$/, "");
-          file.data.exports[exportName] = json5.parse(obj);
-        }
-      });
+
+    visit(tree, "mdxjsEsm", (ast) => {
+      const exportNodes = ast?.data?.estree?.body
+        .filter((child) => child.type === "ExportNamedDeclaration")
+        .forEach((exportDecl) => {
+          // declarations is technically an array because you
+          // can do things like `let x,y,z;` but that really
+          // doesn't apply for this use case
+          const decl = exportDecl.declaration.declarations[0];
+          // if we should handle this
+          if (exportNames.includes(decl.id.name)) {
+            file.data.exports[decl.id.name] = handleDecl(
+              decl.init,
+              decl.id.name
+            );
+          }
+        });
     });
+
     return tree;
   };
+}
+
+function handleDecl(decl, parent) {
+  if (decl.type === "ObjectExpression") {
+    const fields = Object.fromEntries(
+      decl.properties.map(({ key, value, kind }) => {
+        // kind can be "init", "get", or "set"
+        if (kind === "init") {
+          // handle key name
+          let keyName;
+          switch (key.type) {
+            case "Identifier":
+              keyName = key.name;
+              break;
+            case "Literal":
+              keyName = key.value;
+              break;
+            default:
+              console.warn(`Unhandleable property type ${key.type}`);
+          }
+
+          // handle value
+          let pluckedValue;
+          switch (value.type) {
+            case "Literal":
+              pluckedValue = value.value;
+              break;
+            case "ObjectExpression":
+              pluckedValue = handleDecl(value, `parent.${keyName}`);
+              break;
+            case "TemplateLiteral":
+              if (value.expressions.length !== 0) {
+                console.warn(
+                  `[skipping] Template Literals with expressions are not handled. at ${parent}`
+                );
+                break;
+              }
+              // TODO: should we remove newlines from this?
+              pluckedValue = value.quasis[0].value.raw;
+              break;
+            default:
+              console.warn(`Unhandleable value type ${value.type}`);
+          }
+
+          return [keyName, pluckedValue];
+        } else {
+          console.warn(
+            `toast-tools.rehype-pluck-meta is not going to handle object property with kind \`${kind}\` on export ${parent}`
+          );
+        }
+      })
+    );
+    return fields;
+  } else {
+    console.warn(
+      `toast-tools.rehype-pluck-meta is not going to handle ${parent} as it is not an object`
+    );
+  }
 }
