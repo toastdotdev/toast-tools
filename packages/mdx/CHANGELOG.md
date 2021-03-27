@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.2.1
+
+### Patch Changes
+
+- ed19b6c: Handle ArrayExpressions in named exports for estree-to-JSON conversion
+
 ## 0.2.0
 
 ### Minor Changes
