@@ -66,7 +66,6 @@ function handleDecl(decl, parent) {
       pluckedValue = fields;
       break;
     case "ArrayExpression":
-      console.log(decl.elements);
       pluckedValue = decl.elements.map((elementDecl, i) =>
         handleDecl(elementDecl, `parent[${i}]`)
       );
