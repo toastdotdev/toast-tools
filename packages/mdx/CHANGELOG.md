@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.2.0
+
+### Minor Changes
+
+- 4bdc039: Upgrade to the mdx next.9 beta, which replaces the MDX parser completely (providing faster, more stable behavior) and also makes some breaking changes
+
 ## 0.1.5
 
 ### Patch Changes
