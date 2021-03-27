@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.2.2
+
+### Patch Changes
+
+- 212d7ad: remove console.log
+
 ## 0.2.1
 
 ### Patch Changes
