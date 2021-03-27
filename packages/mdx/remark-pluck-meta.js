@@ -30,59 +30,62 @@ export default function remarkPluckMeta({ exportNames }) {
 }
 
 function handleDecl(decl, parent) {
-  if (decl.type === "ObjectExpression") {
-    const fields = Object.fromEntries(
-      decl.properties.map(({ key, value, kind }) => {
-        // kind can be "init", "get", or "set"
-        if (kind === "init") {
-          // handle key name
-          let keyName;
-          switch (key.type) {
-            case "Identifier":
-              keyName = key.name;
-              break;
-            case "Literal":
-              keyName = key.value;
-              break;
-            default:
-              console.warn(`Unhandleable property type ${key.type}`);
-          }
-
-          // handle value
-          let pluckedValue;
-          switch (value.type) {
-            case "Literal":
-              pluckedValue = value.value;
-              break;
-            case "ObjectExpression":
-              pluckedValue = handleDecl(value, `parent.${keyName}`);
-              break;
-            case "TemplateLiteral":
-              if (value.expressions.length !== 0) {
-                console.warn(
-                  `[skipping] Template Literals with expressions are not handled. at ${parent}`
-                );
+  // handle value
+  let pluckedValue;
+  switch (decl.type) {
+    case "Literal":
+      pluckedValue = decl.value;
+      break;
+    case "ObjectExpression":
+      const fields = Object.fromEntries(
+        decl.properties.map(({ key, value, kind }) => {
+          // kind can be "init", "get", or "set"
+          if (kind === "init") {
+            // handle key name
+            let keyName;
+            switch (key.type) {
+              case "Identifier":
+                keyName = key.name;
                 break;
-              }
-              // TODO: should we remove newlines from this?
-              pluckedValue = value.quasis[0].value.raw;
-              break;
-            default:
-              console.warn(`Unhandleable value type ${value.type}`);
+              case "Literal":
+                keyName = key.value;
+                break;
+              default:
+                console.warn(
+                  `toast-tools/mdx: Unhandleable property type ${key.type} in ${parent}. If you think this should be handled, please file a bug.`
+                );
+            }
+            return [keyName, handleDecl(value, `${parent}.${keyName}`)];
+          } else {
+            console.warn(
+              `toast-tools.rehype-pluck-meta is not going to handle object property with kind \`${kind}\` on export ${parent}`
+            );
           }
-
-          return [keyName, pluckedValue];
-        } else {
-          console.warn(
-            `toast-tools.rehype-pluck-meta is not going to handle object property with kind \`${kind}\` on export ${parent}`
-          );
-        }
-      })
-    );
-    return fields;
-  } else {
-    console.warn(
-      `toast-tools.rehype-pluck-meta is not going to handle ${parent} as it is not an object`
-    );
+        })
+      );
+      pluckedValue = fields;
+      break;
+    case "ArrayExpression":
+      console.log(decl.elements);
+      pluckedValue = decl.elements.map((elementDecl, i) =>
+        handleDecl(elementDecl, `parent[${i}]`)
+      );
+      break;
+    case "TemplateLiteral":
+      if (decl.expressions.length !== 0) {
+        console.warn(
+          `[skipping] @toast-tools/mdx: Template Literals with expressions are not handled. at ${parent}`
+        );
+        break;
+      }
+      // TODO: should we remove newlines from this?
+      pluckedValue = decl.quasis[0].value.raw;
+      break;
+    default:
+      console.warn(
+        `Unhandleable value type ${decl.type} in ${parent}. If you think this should be handled, please file a bug.`
+      );
   }
+
+  return pluckedValue;
 }
