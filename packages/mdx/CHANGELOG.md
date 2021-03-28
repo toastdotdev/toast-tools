@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.2.3
+
+### Patch Changes
+
+- 2035bb1: Enable fragments, which are required as of v2-next.9
+
 ## 0.2.2
 
 ### Patch Changes
