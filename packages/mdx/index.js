@@ -216,6 +216,7 @@ export async function compileMdx(mdx, options = {}) {
   return {
     content: `/** @jsxRuntime classic */
 /** @jsx mdx */
+/** @jsxFrag mdx.Fragment */
 import { mdx } from '@mdx-js/preact';
 
 ${contents}`,
