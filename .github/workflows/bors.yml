@@ -1,0 +1,21 @@
+name: Bors Runs
+
+on:
+  push:
+    branches:
+      - staging
+      - trying
+
+jobs:
+  test:
+    name: Bors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: yarn
+      - run: yarn workspaces run test
