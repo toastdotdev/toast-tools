@@ -9,6 +9,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
@@ -33,13 +36,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   trigger-npm-publish-notification:
+    if: ${{ needs.release.outputs.published == true }}
     needs: [release]
     name: Notify Discord of Publish
     runs-on: ubuntu-latest
     env:
-      # NEW_TOAST_VERSION: ${{ needs.release.outputs.new-toast-version }}
       URL: ${{secrets.NPM_PUBLISH_NOTIFICATION_URL}}
+      PUBLISHED_PACKAGES: ${{needs.release.outputs.publishedPackages}}
     steps:
       - name: curl
         run: |
-          curl -XPOST $URL -H "Content-Type: application/json" -d "{\"content\": \"a @toast-tools package was released to NPM\"}"
+          releases=$(echo $PUBLISHED_PACKAGES | jq -r '.[] | \(.name)  \(.version)')
+          curl -XPOST $URL -H "Content-Type: application/json" -d "{\"content\": \"new @toast-tools NPM releases:
+---
+$releases
+\"}"
