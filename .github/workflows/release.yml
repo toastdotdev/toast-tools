@@ -47,7 +47,4 @@ jobs:
       - name: curl
         run: |
           releases=$(echo $PUBLISHED_PACKAGES | jq -r '.[] | \(.name)  \(.version)')
-          curl -XPOST $URL -H "Content-Type: application/json" -d "{\"content\": \"new @toast-tools NPM releases:
----
-$releases
-\"}"
+          curl -XPOST $URL -H "Content-Type: application/json" -d "{\"content\": \"new @toast-tools NPM releases:\n---\n$releases\n\"}"
