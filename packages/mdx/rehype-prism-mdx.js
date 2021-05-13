@@ -6,6 +6,8 @@ import loadLanguages from "prismjs/components/index.js";
 import prismComponents from "prismjs/components.js";
 import visit from "unist-util-visit";
 import rangeParser from "parse-numeric-range";
+import rehypeParse from 'rehype-parse';
+import unified from 'unified';
 
 try {
   // meta doesn't exist in the prismjs package and thus will *FAIL* because it's a FAILURE
@@ -199,15 +201,18 @@ export default function rehypePrismMdx(options) {
               )
           )
         );
+        // parse html string to HAST because unified breaks
+        // all the time.
+        const hastRoot = unified()
+          .use(parse, {
+            emitParseErrors: true,
+            fragment: true
+          })
+          .parse(highlightedCode);
         // render code to string
         parentTree.tagName = "codeblock";
         parentTree.properties = tree.properties;
-        parentTree.children = [
-          {
-            value: highlightedCode,
-            type: "text",
-          },
-        ];
+        parentTree.children = hastRoot.children;
       }
     });
   };
