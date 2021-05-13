@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.2.4
+
+### Patch Changes
+
+- cffc2f4: Fix whitespace handling in hast nodes
+
 ## 0.2.3
 
 ### Patch Changes
