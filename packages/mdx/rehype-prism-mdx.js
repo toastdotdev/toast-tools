@@ -204,7 +204,7 @@ export default function rehypePrismMdx(options) {
         // parse html string to HAST because unified breaks
         // all the time.
         const hastRoot = unified()
-          .use(parse, {
+          .use(rehypeParse, {
             emitParseErrors: true,
             fragment: true
           })
