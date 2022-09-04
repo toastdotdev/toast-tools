@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.3.0
+
+### Minor Changes
+
+- 4ad3f2d: Bump all deps
+
 ## 0.2.4
 
 ### Patch Changes
