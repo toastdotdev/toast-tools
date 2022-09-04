@@ -3,7 +3,9 @@ import visit from "unist-util-visit";
 // a remark plugin that plucks MDX exports and converts
 // the raw estree representation of exports to JSON as much
 // as possible
-export default function remarkPluckMeta({ exportNames }) {
+export default function remarkPluckMeta(
+  { exportNames = [] } = { exportNames: [] }
+) {
   return (tree, file) => {
     file.data.exports = {};
 
