@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.3.1
+
+### Patch Changes
+
+- 3f29634: Fixes for more mdx updates
+
 ## 0.3.0
 
 ### Minor Changes
