@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.3.3
+
+### Patch Changes
+
+- b7865f9: start writing tests, fixup remark-pluck-meta
+
 ## 0.3.2
 
 ### Patch Changes
