@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.3.2
+
+### Patch Changes
+
+- fea05af: use jsx pragmas
+
 ## 0.3.1
 
 ### Patch Changes
