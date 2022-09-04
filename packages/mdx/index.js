@@ -1,4 +1,4 @@
-import mdx from "@mdx-js/mdx";
+import { compile } from "@mdx-js/mdx";
 import { promises as fs } from "fs";
 import globby from "globby";
 import path from "path";
@@ -8,8 +8,6 @@ import slugify from "@sindresorhus/slugify";
 
 import rehypePrism from "./rehype-prism-mdx.js";
 import remarkPluckMeta from "./remark-pluck-meta.js";
-
-const { createCompiler } = mdx;
 
 export const fetchMdxFromDisk = async ({ directory, extensions = ["mdx"] }) => {
   const filenames = await globby(directory, {
@@ -38,41 +36,47 @@ export const processMdx = async (
     rehypePlugins = [],
   }
 ) => {
-  return compileMdx(content, {
-    filepath,
-    remarkPlugins: [
-      [
-        remarkPluckMeta,
-        {
-          exportNames: namedExports.includes("meta")
-            ? namedExports
-            : [...namedExports, "meta"],
-        },
-      ],
-      ...remarkPlugins,
-    ],
-    rehypePlugins: [
-      [rehypePrism, { theme: prismTheme }],
-      rehypeSlug,
-      [
-        rehypeLink,
-        {
-          properties: {
-            className: "heading-link-anchor",
-            // style: "position: absolute; right: calc(100% + 5px);",
+  return compileMdx(
+    {
+      value: content,
+      path: filepath,
+    },
+    {
+      filepath,
+      remarkPlugins: [
+        [
+          remarkPluckMeta,
+          {
+            exportNames: namedExports.includes("meta")
+              ? namedExports
+              : [...namedExports, "meta"],
           },
-          content: {
-            type: "element",
-            tagName: "heading-link-icon",
-            properties: { className: ["heading-link-icon"] },
-            children: [],
-            // children: [parsedCorgi]
-          },
-        },
+        ],
+        ...remarkPlugins,
       ],
-      ...rehypePlugins,
-    ],
-  });
+      rehypePlugins: [
+        [rehypePrism, { theme: prismTheme }],
+        rehypeSlug,
+        [
+          rehypeLink,
+          {
+            properties: {
+              className: "heading-link-anchor",
+              // style: "position: absolute; right: calc(100% + 5px);",
+            },
+            content: {
+              type: "element",
+              tagName: "heading-link-icon",
+              properties: { className: ["heading-link-icon"] },
+              children: [],
+              // children: [parsedCorgi]
+            },
+          },
+        ],
+        ...rehypePlugins,
+      ],
+    }
+  );
 };
 export const sourceMdx = async ({
   setDataForSlug,
@@ -156,7 +160,7 @@ ${(file || source)
         error.stack = "";
         throw error;
       }
-      const compiledMdx = result.content;
+      const compiledMdx = result.value;
       const mdxExports = result.data.exports;
       // if the user doesn't have a meta export, make it
       // an empty object
@@ -199,27 +203,3 @@ ${file}`);
     })
   );
 };
-
-// process MDX using a slightly custom function
-// so that we get the data back from plugins
-// you should probably use processMdx
-export async function compileMdx(mdx, options = {}) {
-  const compiler = createCompiler(options);
-
-  const fileOpts = { contents: mdx };
-  if (options.filepath) {
-    fileOpts.path = options.filepath;
-  }
-
-  const { contents, data } = await compiler.process(fileOpts);
-
-  return {
-    content: `/** @jsxRuntime classic */
-/** @jsx mdx */
-/** @jsxFrag mdx.Fragment */
-import { mdx } from '@mdx-js/preact';
-
-${contents}`,
-    data,
-  };
-}
