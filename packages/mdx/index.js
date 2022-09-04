@@ -36,13 +36,13 @@ export const processMdx = async (
     rehypePlugins = [],
   }
 ) => {
-  return compileMdx(
+  return compile(
     {
       value: content,
       path: filepath,
     },
     {
-      filepath,
+      jsxImportSource: "preact",
       remarkPlugins: [
         [
           remarkPluckMeta,
