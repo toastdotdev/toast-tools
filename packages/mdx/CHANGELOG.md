@@ -1,5 +1,11 @@
 # @toastdotdev/mdx
 
+## 0.3.4
+
+### Patch Changes
+
+- 0682291: Don't use filepath in compile call for now
+
 ## 0.3.3
 
 ### Patch Changes
