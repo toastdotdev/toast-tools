@@ -36,47 +36,41 @@ export const processMdx = async (
     rehypePlugins = [],
   }
 ) => {
-  return compile(
-    {
-      value: content,
-      path: filepath,
-    },
-    {
-      jsxImportSource: "preact",
-      remarkPlugins: [
-        [
-          remarkPluckMeta,
-          {
-            exportNames: namedExports.includes("meta")
-              ? namedExports
-              : [...namedExports, "meta"],
-          },
-        ],
-        ...remarkPlugins,
+  return compile(content, {
+    jsxImportSource: "preact",
+    remarkPlugins: [
+      [
+        remarkPluckMeta,
+        {
+          exportNames: namedExports.includes("meta")
+            ? namedExports
+            : [...namedExports, "meta"],
+        },
       ],
-      rehypePlugins: [
-        [rehypePrism, { theme: prismTheme }],
-        rehypeSlug,
-        [
-          rehypeLink,
-          {
-            properties: {
-              className: "heading-link-anchor",
-              // style: "position: absolute; right: calc(100% + 5px);",
-            },
-            content: {
-              type: "element",
-              tagName: "heading-link-icon",
-              properties: { className: ["heading-link-icon"] },
-              children: [],
-              // children: [parsedCorgi]
-            },
+      ...remarkPlugins,
+    ],
+    rehypePlugins: [
+      [rehypePrism, { theme: prismTheme }],
+      rehypeSlug,
+      [
+        rehypeLink,
+        {
+          properties: {
+            className: "heading-link-anchor",
+            // style: "position: absolute; right: calc(100% + 5px);",
           },
-        ],
-        ...rehypePlugins,
+          content: {
+            type: "element",
+            tagName: "heading-link-icon",
+            properties: { className: ["heading-link-icon"] },
+            children: [],
+            // children: [parsedCorgi]
+          },
+        },
       ],
-    }
-  );
+      ...rehypePlugins,
+    ],
+  });
 };
 export const sourceMdx = async ({
   setDataForSlug,

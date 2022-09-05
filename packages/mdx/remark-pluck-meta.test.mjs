@@ -10,7 +10,9 @@ test("remark-pluck-meta", async (t) => {
     "another": {
         "nested": "object"
     }
-}`,
+}
+
+# testing`,
     },
     {
       remarkPlugins: [[remarkPluckMeta, { exportNames: "meta" }]],

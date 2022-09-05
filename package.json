@@ -5,6 +5,7 @@
   "private": true,
   "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
   "license": "MIT",
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
